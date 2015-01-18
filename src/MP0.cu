@@ -49,7 +49,7 @@ __global__ void cudaFun(void *data) {
 /**
  * Host function that prepares data array and passes it to the CUDA kernel.
  */
-int main(void) {
+int main2(void) {
 	printf("Program begin...");
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);

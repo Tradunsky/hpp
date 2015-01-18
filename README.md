@@ -7,4 +7,4 @@ Environment:
  - Ubuntu 14.04
 
 Solutions:
- MP0.cu - Device Query
+ - MP0.cu - Device Query
