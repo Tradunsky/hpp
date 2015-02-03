@@ -48,7 +48,7 @@ __global__ void vecAdd(float *in1, float *in2, float *out, int len) {
 	  out[indx] = in1[indx] + in2[indx];
 }
 
-int main(int argc, char **argv) {
+int main2(int argc, char **argv) {
   srand(time(NULL));
 //  wbArg_t args;
   int inputLength = 5;
@@ -81,9 +81,9 @@ int main(int argc, char **argv) {
 //  wbTime_start(GPU, "Allocating GPU memory.");
   printf("\nAllocating GPU memory.");
   //@@ Allocate GPU memory here
-  CUDA_CHECK_RETURN(cudaMalloc(&deviceInput1, dataSize));
-  CUDA_CHECK_RETURN(cudaMalloc(&deviceInput2, dataSize));
-  CUDA_CHECK_RETURN(cudaMalloc(&deviceOutput, dataSize));
+  CUDA_CHECK_RETURN(cudaMalloc((void **)&deviceInput1, dataSize));
+  CUDA_CHECK_RETURN(cudaMalloc((void **)&deviceInput2, dataSize));
+  CUDA_CHECK_RETURN(cudaMalloc((void **)&deviceOutput, dataSize));
 //  wbTime_stop(GPU, "Allocating GPU memory.");
   printf("\nAllocating GPU memory.");
 
