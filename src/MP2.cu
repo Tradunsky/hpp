@@ -50,8 +50,8 @@ __global__ void matrixMultiply(float *A, float *B, float *C, int numARows,
 		float c = 0.0;
 		printf("\n");
 		for(int i =0; i<numBRows; i++){
-			c = A[row*numBRows+i] * B[col+i*numBColumns];
-			printf("A[%i] * B[%i]=%10.2f + ",row*numBRows+i,col+i*numBColumns, c);
+			c += A[row*numBRows+i] * B[col+i*numBColumns];
+			printf("A[%i]*B[%i]=%10.2f + ",row*numBRows+i,col+i*numBColumns, c);
 		}
 		C[row*numBColumns+col] = c;
 		printf("\nA[%i]=%10.2f", row*numBColumns+col, C[row*numBColumns+col]);
@@ -63,7 +63,7 @@ __global__ void matrixMultiply(float *A, float *B, float *C, int numARows,
 int main(int argc, char **argv) {
 	srand(time(NULL));
 //  wbArg_t args;
-  unsigned int TILE_WIDTH = 2;
+  unsigned int TILE_WIDTH = 16;
   float *hostA; // The A matrix
   float *hostB; // The B matrix
   float *hostC; // The output C matrix
@@ -94,12 +94,12 @@ int main(int argc, char **argv) {
   numBColumns = numARows;
   generateMatrix(hostA, numARows, numAColumns);
   printMatrix(
-//		  "A",
+		  "A",
 		  hostA, numARows, numAColumns);
   generateMatrix(hostB, numBRows, numBColumns);
   printMatrix(
-//		  "B",
-		  hostB, numARows, numAColumns);
+		  "B",
+		  hostB, numBRows, numBColumns);
   //@@ Set numCRows and numCColumns
   numCRows = numARows;
   numCColumns = numBColumns;
@@ -130,10 +130,12 @@ int main(int argc, char **argv) {
   //n = countAColumn, m = countARows;
   //k = countBColumn, n = countBRows;
   //k = countCColumn, m = countCRows
-  unsigned int blockX = (numARows-1)/TILE_WIDTH+1;
-  unsigned int blockY = (numBRows-1)/TILE_WIDTH+1;
-  dim3 blockCount(blockX, blockY, 1);
-  dim3 threadCount(TILE_WIDTH, TILE_WIDTH, 1);
+//  unsigned int blockX = (numARows-1)/numCRows+1;
+//  unsigned int blockY = (numBRows-1)/numCRows+1;
+  unsigned int blockX = (numBColumns + TILE_WIDTH - 1) / TILE_WIDTH;
+  unsigned int blockY = (numARows + TILE_WIDTH - 1) / TILE_WIDTH;
+  dim3 blockCount(blockX, blockY);
+  dim3 threadCount(TILE_WIDTH, TILE_WIDTH);
   printf("\nPerforming CUDA computation");
   //@@ Launch the GPU Kernel here
   matrixMultiply<<<blockCount, threadCount>>>(deviceA,
